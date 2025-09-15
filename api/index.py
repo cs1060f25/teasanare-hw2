@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, jsonify
 from num2words import num2words
 from text2digits import text2digits
 import base64
-import re
 
 app = Flask(__name__)
     
@@ -54,6 +53,8 @@ def convert():
         
         # Convert input to integer based on input type
         if input_type == 'text':
+            if any(char.isdigit() for char in input_value):
+                raise ValueError("Invalid English Text input")
             number = text_to_number(input_value)
         elif input_type == 'binary':
             number = int(input_value, 2)

@@ -85,3 +85,10 @@ def test_invalid_octal_input(client):
     response = client.post('/convert', json={'input': '18', 'inputType': 'octal', 'outputType': 'decimal'})
     assert response.json['error'] is not None
     assert "invalid literal" in response.json['error']
+    
+# --- text2digits Library Error Handling Test
+def test_invalid_english_input(client):
+    """Test handling digits in an english text input."""
+    response = client.post('/convert', json={'input': '18', 'inputType': 'text', 'outputType': 'decimal'})
+    assert response.json['error'] is not None
+    assert "Invalid English Text input" in response.json['error']  
