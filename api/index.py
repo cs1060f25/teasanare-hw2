@@ -5,26 +5,14 @@ import base64
 import re
 
 app = Flask(__name__)
-
+    
 def text_to_number(text):
-    """Convert English text number to integer"""
-    # Remove any non-alphanumeric characters and convert to lowercase
-    text = re.sub(r'[^a-zA-Z\s-]', '', text.lower())
-    
-    # Special case for zero
-    if text in ['zero', 'nil']:
-        return 0
-    
-    # Dictionary for special number words
-    number_words = {
-        'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-        'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10
-    }
-    
-    if text in number_words:
-        return number_words[text]
-    
-    raise ValueError("Unable to convert text to number")
+    """Convert English text number to integer using text2digits."""
+    try:
+        t2d = text2digits.Text2Digits()
+        return int(t2d.convert(text))
+    except:
+        raise ValueError("Unable to convert text to number")
 
 def number_to_text(number):
     """Convert integer to English text"""
@@ -38,7 +26,7 @@ def base64_to_number(b64_str):
     try:
         # Decode base64 to bytes, then convert bytes to integer
         decoded_bytes = base64.b64decode(b64_str)
-        return int.from_bytes(decoded_bytes, byteorder='big')
+        return int.from_bytes(decoded_bytes, byteorder='little')
     except:
         raise ValueError("Invalid base64 input")
 
@@ -47,7 +35,7 @@ def number_to_base64(number):
     try:
         # Convert integer to bytes, then encode to base64
         byte_count = (number.bit_length() + 7) // 8
-        number_bytes = number.to_bytes(byte_count, byteorder='big')
+        number_bytes = number.to_bytes(byte_count, byteorder='little')
         return base64.b64encode(number_bytes).decode('utf-8')
     except:
         raise ValueError("Unable to convert to base64")
